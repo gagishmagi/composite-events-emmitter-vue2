@@ -1,29 +1,28 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <Search label="name" @search-me="search"/>
+    <div>{{state.name}}</div>
   </div>
-</template>
-
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from './components/HelloWorld.vue';
-
-@Component({
+</template><script>
+import Search from "./components/Search";
+import { computed, reactive } from "@vue/composition-api";export default {
+  name: "App",
   components: {
-    HelloWorld,
+    Search
   },
-})
-export default class App extends Vue {}
+  setup() {
+    const state = reactive({
+      data: {},
+      name: computed(() =>
+        state.data.name ? `The name is: ${state.data.name} age is: ${state.data.age}` : ""
+      )
+    });    return {
+      state,
+      async search(ev) {
+        const res = await fetch(`https://api.agify.io/?name=${ev}`);
+        state.data = await res.json();
+      }
+    };
+  }
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
